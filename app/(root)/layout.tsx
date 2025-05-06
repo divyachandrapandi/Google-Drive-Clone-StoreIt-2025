@@ -4,6 +4,7 @@ import MobileNavigation from "@/components/MobileNavigation";
 import Header from "@/components/Header";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { redirect } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const currentUser = await getCurrentUser();
@@ -20,7 +21,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         <div className="main-content remove-scrollbar">{children}</div>
       </section>
 
-      {/*<Toaster />*/}
+      <Toaster />
     </main>
   );
 };

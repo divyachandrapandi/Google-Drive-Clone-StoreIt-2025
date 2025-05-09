@@ -5,8 +5,8 @@ import Header from "@/components/Header";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { redirect, usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
-import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic";
 const Layout = async ({ params, children }: { children: React.ReactNode }) => {
   const currentUser = await getCurrentUser();
 

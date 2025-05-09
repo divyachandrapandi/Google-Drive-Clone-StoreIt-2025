@@ -41,7 +41,6 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [emails, setEmails] = useState<string[]>([]);
 
   const path = usePathname();
-  console.log(file);
   const closeAllModals = () => {
     setIsModalOpen(false);
     setIsDropdownOpen(false);

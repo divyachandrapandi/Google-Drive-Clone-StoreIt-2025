@@ -64,16 +64,29 @@ export const uploadFile = async ({
 const createQueries = (
   currentUser: Models.Document,
   types: string[],
-  searchText: string,
-  sort: string,
-  limit?: number,
+  searchText: string | undefined,
+  sort: string | undefined,
+  limit?: number | undefined,
+  currentUserId?: string,
+  currentUserEmail?: string,
+  isDemoPage?: boolean,
 ) => {
-  const queries = [
-    Query.or([
-      Query.equal("owner", [currentUser.$id]),
-      Query.contains("users", [currentUser.email]),
-    ]),
-  ];
+  let queries;
+  if (isDemoPage && currentUserEmail && currentUserId) {
+    queries = [
+      Query.or([
+        Query.equal("owner", [currentUserId]),
+        Query.contains("users", [currentUserEmail]),
+      ]),
+    ];
+  } else {
+    queries = [
+      Query.or([
+        Query.equal("owner", [currentUser.$id]),
+        Query.contains("users", [currentUser?.email]),
+      ]),
+    ];
+  }
 
   if (types.length > 0) queries.push(Query.equal("type", types));
   if (searchText) queries.push(Query.contains("name", searchText));
@@ -127,7 +140,7 @@ export const renameFile = async ({
 
   try {
     const newName = `${name}.${extension}`;
-    console.log(newName);
+
     const updatedFile = await databases.updateDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
@@ -204,6 +217,108 @@ export async function getTotalSpaceUsed() {
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       [Query.equal("owner", [currentUser.$id])],
+    );
+
+    const totalSpace = {
+      image: { size: 0, latestDate: "" },
+      document: { size: 0, latestDate: "" },
+      video: { size: 0, latestDate: "" },
+      audio: { size: 0, latestDate: "" },
+      other: { size: 0, latestDate: "" },
+      used: 0,
+      all: 2 * 1024 * 1024 * 1024 /* 2GB available bucket storage */,
+    };
+
+    files.documents.forEach((file) => {
+      const fileType = file.type as FileType;
+      totalSpace[fileType].size += file.size;
+      totalSpace.used += file.size;
+
+      if (
+        !totalSpace[fileType].latestDate ||
+        new Date(file.$updatedAt) > new Date(totalSpace[fileType].latestDate)
+      ) {
+        totalSpace[fileType].latestDate = file.$updatedAt;
+      }
+    });
+
+    return parseStringify(totalSpace);
+  } catch (error) {
+    handleError(error, "Error calculating total space used:, ");
+  }
+}
+
+// Guest Page
+
+const createGuestQueries = (
+  currentUserId: string,
+  currentUserEmail: string,
+  searchText: string | undefined,
+  sort: string | undefined,
+  limit?: number | undefined,
+) => {
+  let queries = [
+    Query.or([
+      Query.equal("owner", [currentUserId]),
+      Query.contains("users", [currentUserEmail]),
+    ]),
+  ];
+
+  if (searchText) queries.push(Query.contains("name", searchText));
+  if (limit) queries.push(Query.limit(limit));
+
+  if (sort) {
+    const [sortBy, orderBy] = sort.split("-"); // default value - sort=$createdAt-desc
+
+    queries.push(
+      orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy),
+    );
+  }
+
+  return queries;
+};
+
+export const getGuestFiles = async ({
+  types = [],
+  searchText = "",
+  sort = "$createdAt-desc",
+  limit,
+}: GetFilesProps) => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const currentUserId = appwriteConfig.userId;
+    const currentUserEmail = appwriteConfig.userEmail;
+    const queries = createGuestQueries(
+      currentUserId,
+      currentUserEmail,
+      searchText,
+      sort,
+      limit,
+    );
+
+    const files = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      queries,
+    );
+
+    return parseStringify(files);
+  } catch (error) {
+    handleError(error, "Failed to get files");
+  }
+};
+
+export async function getGuestTotalSpaceUsed() {
+  try {
+    const { databases } = await createAdminClient();
+    const currentUserId = appwriteConfig.userId;
+    const currentUserEmail = appwriteConfig.userEmail;
+
+    const files = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      [Query.equal("owner", [currentUserId])],
     );
 
     const totalSpace = {

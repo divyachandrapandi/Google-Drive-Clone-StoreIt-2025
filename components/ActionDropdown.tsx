@@ -161,49 +161,58 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
             {file.name}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {actionsDropdownItems.map((actionItem) => (
-            <DropdownMenuItem
-              key={actionItem.value}
-              className="shad-dropdown-item"
-              onClick={() => {
-                setAction(actionItem);
+          {actionsDropdownItems.map((actionItem) => {
+            if (
+              path === "/guests" &&
+              ["Delete", "Share", "Rename"].includes(actionItem.label)
+            ) {
+              return null;
+            } else {
+              return (
+                <DropdownMenuItem
+                  key={actionItem.value}
+                  className="shad-dropdown-item"
+                  onClick={() => {
+                    setAction(actionItem);
 
-                if (
-                  ["rename", "share", "delete", "details"].includes(
-                    actionItem.value,
-                  )
-                ) {
-                  setIsModalOpen(true);
-                }
-              }}
-            >
-              {actionItem.value === "download" ? (
-                <Link
-                  href={constructDownloadUrl(file.bucketField)}
-                  download={file.name}
-                  className="flex items-center gap-2"
+                    if (
+                      ["rename", "share", "delete", "details"].includes(
+                        actionItem.value,
+                      )
+                    ) {
+                      setIsModalOpen(true);
+                    }
+                  }}
                 >
-                  <Image
-                    src={actionItem.icon}
-                    alt={actionItem.label}
-                    width={30}
-                    height={30}
-                  />
-                  {actionItem.label}
-                </Link>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={actionItem.icon}
-                    alt={actionItem.label}
-                    width={30}
-                    height={30}
-                  />
-                  {actionItem.label}
-                </div>
-              )}
-            </DropdownMenuItem>
-          ))}
+                  {actionItem.value === "download" ? (
+                    <Link
+                      href={constructDownloadUrl(file.bucketField)}
+                      download={file.name}
+                      className="flex items-center gap-2"
+                    >
+                      <Image
+                        src={actionItem.icon}
+                        alt={actionItem.label}
+                        width={30}
+                        height={30}
+                      />
+                      {actionItem.label}
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={actionItem.icon}
+                        alt={actionItem.label}
+                        width={30}
+                        height={30}
+                      />
+                      {actionItem.label}
+                    </div>
+                  )}
+                </DropdownMenuItem>
+              );
+            }
+          })}
         </DropdownMenuContent>
       </DropdownMenu>
 

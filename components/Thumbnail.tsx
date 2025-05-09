@@ -18,7 +18,7 @@ export const Thumbnail = ({
   className,
 }: Props) => {
   const isImage = type === "image" && extension !== "svg";
-  console.log(isImage);
+
   return (
     <figure className={cn("thumbnail flex-center ", className)}>
       <Image

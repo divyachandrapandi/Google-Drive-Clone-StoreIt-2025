@@ -25,7 +25,6 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const FileDetails = ({ file }: { file: Models.Document }) => {
-  console.log(file);
   return (
     <>
       <ImageThumbnail file={file} />

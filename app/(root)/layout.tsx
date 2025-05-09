@@ -3,10 +3,11 @@ import Sidebar from "@/components/Sidebar";
 import MobileNavigation from "@/components/MobileNavigation";
 import Header from "@/components/Header";
 import { getCurrentUser } from "@/lib/actions/user.action";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
+import { cookies } from "next/headers";
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ params, children }: { children: React.ReactNode }) => {
   const currentUser = await getCurrentUser();
 
   if (!currentUser) return redirect("/sign-in");

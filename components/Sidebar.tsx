@@ -37,28 +37,55 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
 
       <nav className="sidebar-nav h5">
         <ul className="flex flex-1 flex-col gap-6">
-          {navItems.map(({ url, name, icon }) => (
-            <Link key={name} href={url} className="lg:w-full">
+          {pathname !== "/guests" ? (
+            navItems.map(({ url, name, icon }) => (
+              <Link key={name} href={url} className="lg:w-full">
+                <li
+                  className={cn(
+                    "sidebar-nav-item h5",
+                    pathname === url && "shad-active",
+                  )}
+                >
+                  <Image
+                    src={icon}
+                    alt={name}
+                    width={24}
+                    height={24}
+                    className={cn(
+                      "nav-icon",
+                      pathname === url && "nav-icon-active",
+                    )}
+                  />
+                  <p className="hidden lg:block">{name}</p>
+                </li>
+              </Link>
+            ))
+          ) : (
+            <Link
+              key={"guest-dashboard"}
+              href={"/guests"}
+              className="lg:w-full"
+            >
               <li
                 className={cn(
                   "sidebar-nav-item h5",
-                  pathname === url && "shad-active",
+                  pathname === "/guests" && "shad-active",
                 )}
               >
                 <Image
-                  src={icon}
-                  alt={name}
+                  src={"/assets/icons/others.svg"}
+                  alt={"guests-path"}
                   width={24}
                   height={24}
                   className={cn(
                     "nav-icon",
-                    pathname === url && "nav-icon-active",
+                    pathname === "/guests" && "nav-icon-active",
                   )}
                 />
-                <p className="hidden lg:block">{name}</p>
+                <p className="hidden lg:block">Guest Dashboard</p>
               </li>
             </Link>
-          ))}
+          )}
         </ul>
       </nav>
 
@@ -79,8 +106,12 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
           className="sidebar-user-avatar"
         />
         <div className="hidden lg:block">
-          <p className="subtitle-2 capitalize">{fullName}</p>
-          <p className="caption">{email}</p>
+          <p className="subtitle-2 capitalize">
+            {fullName ? fullName : "Guest Profile"}
+          </p>
+          <p className="caption">
+            {email ? email : "Please Login to see more options"}
+          </p>
         </div>
       </div>
     </aside>

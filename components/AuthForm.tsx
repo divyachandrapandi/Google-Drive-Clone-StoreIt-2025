@@ -19,6 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createAccount, signInUser } from "@/lib/actions/user.action";
 import OtpModal from "@/components/OTPModal";
+import { useRouter } from "next/navigation";
 
 type FormType = "sign-in" | "sign-up";
 
@@ -36,7 +37,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [accountId, setAccountId] = useState(null);
-
+  const router = useRouter();
   const formSchema = authFormSchema(type);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -47,8 +48,13 @@ const AuthForm = ({ type }: { type: FormType }) => {
     },
   });
 
+  const redirectToGuest = () => {
+    // Save guest ID in localStorage or session (not secure, just for demo)
+    localStorage.setItem("guest", "true");
+    router.push("/guests"); // or any protected route to demo
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     setIsLoading(true);
     setErrorMessage("");
 
@@ -161,6 +167,25 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </Link>
           </div>
         </form>
+
+        <Button
+          type="submit"
+          className="primary-btn form-submit-button"
+          disabled={isLoading}
+          onClick={redirectToGuest}
+        >
+          {"Login as Guest"}
+
+          {isLoading && (
+            <Image
+              src="/assets/icons/loader.svg"
+              alt="loader"
+              width={24}
+              height={24}
+              className="ml-2 animate-spin"
+            />
+          )}
+        </Button>
         {accountId && (
           <OtpModal email={form.getValues("email")} accountId={accountId} />
         )}

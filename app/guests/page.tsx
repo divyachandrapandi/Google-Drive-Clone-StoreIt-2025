@@ -7,17 +7,19 @@ import { Chart } from "@/components/Chart";
 import { FormattedDateTime } from "@/components/FormattedDateTime";
 import { Thumbnail } from "@/components/Thumbnail";
 import { Separator } from "@/components/ui/separator";
-import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.action";
+import {
+  getGuestFiles,
+  getGuestTotalSpaceUsed,
+} from "@/lib/actions/file.action";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
 
 const Dashboard = async () => {
   // Parallel requests
   const [files, totalSpace] = await Promise.all([
-    getFiles({ types: [], limit: 10 }),
-    getTotalSpaceUsed(),
+    getGuestFiles({ types: [], limit: 10 }),
+    getGuestTotalSpaceUsed(),
   ]);
 
-  // Get usage summary
   const usageSummary = getUsageSummary(totalSpace);
 
   return (

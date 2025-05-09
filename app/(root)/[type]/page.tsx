@@ -1,15 +1,17 @@
+// "use client";
 import React from "react";
 import Sort from "@/components/Sort";
 import { getFiles } from "@/lib/actions/file.action";
 import { Models } from "node-appwrite";
 import Card from "@/components/Card";
 import { getFileTypesParams, FileTypes } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 const Page = async ({ searchParams, params }: SearchParamProps) => {
   const type = ((await params)?.type as string) || "";
   const searchText = ((await searchParams)?.query as string) || "";
   const sort = ((await searchParams)?.sort as string) || "";
-
+  // const path = usePathname();
   const types = getFileTypesParams(type) as FileType[];
 
   if (!FileTypes.includes(type)) {

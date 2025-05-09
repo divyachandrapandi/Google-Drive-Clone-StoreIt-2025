@@ -80,7 +80,7 @@ const createQueries = (
   if (limit) queries.push(Query.limit(limit));
 
   if (sort) {
-    const [sortBy, orderBy] = sort.split("-");
+    const [sortBy, orderBy] = sort.split("-"); // default value - sort=$createdAt-desc
 
     queries.push(
       orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy),
@@ -111,7 +111,6 @@ export const getFiles = async ({
       queries,
     );
 
-    console.log({ files });
     return parseStringify(files);
   } catch (error) {
     handleError(error, "Failed to get files");
@@ -128,6 +127,7 @@ export const renameFile = async ({
 
   try {
     const newName = `${name}.${extension}`;
+    console.log(newName);
     const updatedFile = await databases.updateDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
@@ -170,7 +170,7 @@ export const updateFileUsers = async ({
 
 export const deleteFile = async ({
   fileId,
-  bucketFileId,
+  bucketField,
   path,
 }: DeleteFileProps) => {
   const { databases, storage } = await createAdminClient();
@@ -183,7 +183,7 @@ export const deleteFile = async ({
     );
 
     if (deletedFile) {
-      await storage.deleteFile(appwriteConfig.bucketId, bucketFileId);
+      await storage.deleteFile(appwriteConfig.bucketId, bucketField);
     }
 
     revalidatePath(path);

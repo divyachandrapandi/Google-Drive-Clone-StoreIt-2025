@@ -233,3 +233,5 @@ export const getFileTypesParams = (type: string) => {
       return ["document"];
   }
 };
+
+export const FileTypes = ["documents", "media", "images", "others"];

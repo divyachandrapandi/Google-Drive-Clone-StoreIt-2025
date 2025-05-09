@@ -351,7 +351,7 @@
 
     /* ActionsDropdown */
     .rename-input-field {
-        @apply   h-[52px] w-full rounded-full border px-4 shadow-drop-1  ;
+        @apply   h-[52px] w-full rounded-full border selection:text-gray-600 selection:bg-blue-100 px-4 shadow-drop-1  ;
     }
 
     .delete-confirmation {

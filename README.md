@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-
+<p></p>
       <img src="https://i.ibb.co/wR9G2k3/Readme-Thumbnail.png" alt="Project Banner"/>
 
   <br />
